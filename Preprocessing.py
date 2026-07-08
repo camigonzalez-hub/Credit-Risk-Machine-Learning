@@ -8,15 +8,17 @@ from sklearn.utils.validation import check_is_fitted
 class DataPreProcessor(BaseEstimator, TransformerMixin):
     """Clase personalizada para preprocesar variables numéricas, categóricas y binarias."""
     
-    def __init__(self, columnas_categoricas: list = None, columnas_numericas: list = None, columnas_binarias: list = None) -> None:
+    def __init__(self, columnas_categoricas: list = None, categorias_referencia : list = None, columnas_numericas: list = None, columnas_binarias: list = None) -> None:
         """
         :param columnas_categoricas: lista de las variables categoricas a transformar
         :param columnas_numericas: lista de las variables a estandarizar
         """
         self.columnas_categoricas = columnas_categoricas or []
+        self.categorias_referencia = categorias_referencia or []
         self.columnas_numericas = columnas_numericas or []
         self.columnas_binarias = columnas_binarias or  []
     
+        
     def fit(self, X: pd.DataFrame, y=None):
         """
         Aprende las transformaciones de las columnas numéricas y categóricas
@@ -25,7 +27,7 @@ class DataPreProcessor(BaseEstimator, TransformerMixin):
         """
     
         self.preprocesador = ColumnTransformer(transformers=[
-            ('cat', OneHotEncoder( drop='first',handle_unknown='ignore', sparse_output=False), self.columnas_categoricas),
+            ('cat', OneHotEncoder(drop =  self.categorias_referencia ,handle_unknown='error', sparse_output=False), self.columnas_categoricas),
             ('num', StandardScaler(), self.columnas_numericas),
             ('bin', OrdinalEncoder(), self.columnas_binarias)
         ], remainder="passthrough") 
@@ -53,9 +55,9 @@ class TargetEncoder:
     
     def __init__(self) -> None:
         """
-        Mapear la variable objetivo. Transforma los valores de la clase: 'good' -  1 y 'bad' - 0
+        Mapear la variable objetivo. Transforma los valores de la clase: 'good' -  0 y 'bad' - 1
         """
-        self.mapping = {'good' : 1, 'bad' : 0}
+        self.mapping = {'good' : 0, 'bad' : 1}
         
     def transform(self, y : pd.DataFrame) -> pd.DataFrame :
         return y.map(self.mapping)
