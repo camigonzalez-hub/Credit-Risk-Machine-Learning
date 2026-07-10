@@ -4,19 +4,20 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, OrdinalEncoder
 from sklearn.utils.validation import check_is_fitted
 
-#Creamos una clase que se encargue del preprocesamiento de los datos, esto incluye las transformaciones de las variables y la estandarización de los datos
 class DataPreProcessor(BaseEstimator, TransformerMixin):
     """Clase personalizada para preprocesar variables numéricas, categóricas y binarias."""
     
     def __init__(self, columnas_categoricas: list = None, categorias_referencia : list = None, columnas_numericas: list = None, columnas_binarias: list = None) -> None:
         """
         :param columnas_categoricas: lista de las variables categoricas a transformar
-        :param columnas_numericas: lista de las variables a estandarizar
+        :param categorias_referencia: lista de las categorias que se tomarán como referencia para ser eliminadas mediante One Hot Encoder
+        :param columnas_numericas: lista de las variables numéricas que se estandarizarán
+        :param columnas_binarias: lista de las variables binarias que se mappearan a 0 y 1. 
         """
-        self.columnas_categoricas = columnas_categoricas or []
-        self.categorias_referencia = categorias_referencia or []
-        self.columnas_numericas = columnas_numericas or []
-        self.columnas_binarias = columnas_binarias or  []
+        self.columnas_categoricas = columnas_categoricas 
+        self.categorias_referencia = categorias_referencia 
+        self.columnas_numericas = columnas_numericas 
+        self.columnas_binarias = columnas_binarias 
     
         
     def fit(self, X: pd.DataFrame, y=None):
@@ -43,23 +44,20 @@ class DataPreProcessor(BaseEstimator, TransformerMixin):
         :return: Pd.DataFrame
         """
         check_is_fitted(self,'preprocesador')
-        
-        # Aplicamos el procesador definido en fit. Esto devuelve un array de NumPy
+
         X_transformed = self.preprocesador.transform(X)
-        
-        # Reconstruir el DataFrame con los nuevos nombres de columnas
+
         return pd.DataFrame(X_transformed, columns=self.preprocesador.get_feature_names_out(),index=X.index)
     
-#Creamos una clase que se encargue de mapear la variable objetivo
-class TargetEncoder:
+
+class TargetMapper: 
+    """ Mapear la variable objetivo. Transforma los valores de la clase: 'good' -  0 y 'bad' - 1 """
     
     def __init__(self) -> None:
-        """
-        Mapear la variable objetivo. Transforma los valores de la clase: 'good' -  0 y 'bad' - 1
-        """
         self.mapping = {'good' : 0, 'bad' : 1}
         
-    def transform(self, y : pd.DataFrame) -> pd.DataFrame :
+    def transform(self, y : pd.Series) -> pd.Series :
+        """ Transforma la columna de la variable target """
         return y.map(self.mapping)
         
         
