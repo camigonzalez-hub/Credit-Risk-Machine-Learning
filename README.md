@@ -53,3 +53,14 @@ Se debe tener en cuenta que, si bien la interpretabilidad fue una de las princip
 **Definición de la clase positiva:** La regresión logística modela la probabilidad de pertenecer a la clase positiva. Por este motivo, la elección de dicha clase determina la interpretación de los coeficientes estimados por el modelo. Dado que el objetivo es identificar clientes con mayor riesgo de generar un mal crédito, se definió la categoría "bad" como la clase positiva, asignándole el valor 1, mientras que "good" se asignó al valor 0. Esta decisión permite una interpretación más intuitiva de los resultados: un coeficiente positivo indica un aumento en la probabilidad de que el cliente pertenezca a la categoría "bad" (mayor riesgo de incumplimiento), mientras que un coeficiente negativo indica una disminución de dicha probabilidad.
 
 **Manejo de las variables categóricas:** Las variables categóricas fueron codificadas mediante One-Hot Encoding, definiendo explícitamente una categoría de referencia para evitar multicolinealidad perfecta y facilitar la interpretación de los coeficientes de la regresión logística. Se eligió como categoría de referencia la más frecuente por ser la mejor representada en la muestra, lo que facilita la interpretación de los coeficientes y permite que todas las comparaciones se realicen respecto de la categoría predominante.
+
+## Resultados Finales del modelo
+
+| Métrica                |  Test final  |
+| ---------------------- |  ----------- |
+| ROC-AUC                |      0.81    |
+| PR-CURVE               |      0.65    |
+| Average precision      |      0.66    |
+| Recall clase objetivo  |      0.87    |
+
+
